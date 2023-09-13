@@ -1,13 +1,45 @@
+import pygame
+import os
+
 class Table(object):
 
     ROW_COUNT = 6
     COLUMN_COUNT = 7
+    SQUARESIZE = 100    # wielkosc 100px
+    TOKENS = [[]]
+
 
 
     def __init__(self):
-        rows, cols = (6, 7)
-        self.table = [[0 for i in range(cols)] for j in range(rows)]
+        os.environ['SDL_VIDEO_WINDOW_POS'] = '100,100'
+        pygame.init()
+        width = self.COLUMN_COUNT * self.SQUARESIZE
+        height = (self.ROW_COUNT + 1) * self.SQUARESIZE
 
+        size = (width, height)
+        self.SCREEN = pygame.display.set_mode(size)
+
+
+        self.table = [[0 for i in range(self.COLUMN_COUNT)] for j in range(self.ROW_COUNT)]
+
+## PYGAME FRONTEND AND GUI
+
+    def draw_board(self):
+
+        background = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\4inrow background.png")
+        self.SCREEN.blit(background, (0,0))
+        pygame.display.flip()
+
+        """
+        for c in range(self.COLUMN_COUNT):
+            for r in range(self.ROW_COUNT):
+                pass   
+        pass
+        """
+
+
+
+## CLI INTERFACE AND BACKEND
     def printTable(self):
         """
         # print('    ', end="")
@@ -41,7 +73,34 @@ class Table(object):
                 return r
 
     def placeToken(self, col, token):
-        self.table[self.findEmptyRow(col)][col] = token
+        xPos = int(self.findEmptyRow(col))
+        yPos = int(col)
+        self.table[xPos][yPos] = token                              # inserting
+        xScreenPos = int(xPos*100)
+        yScreenPos = int(yPos*100 + 100)
+        screenPos = (xScreenPos, yScreenPos)
+
+        if token == 1:
+            token_img = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\green_token.png").convert_alpha()
+            # self.TOKENS[xPos][yPos] = token_img
+            token_img.blit(self.SCREEN, screenPos)
+        else:
+            token_img = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\red_token.png").convert_alpha()
+            # self.TOKENS[xPos][yPos] = token_img
+            token_img.blit(self.SCREEN, screenPos)
+
+        pygame.display.update()
+
+    def printAllTokens(self):
+        for i in range(self.ROW_COUNT):
+            for j in range(self.COLUMN_COUNT):
+                self.TOKENS[i][j].blit(self.SCREEN, self.tabPosToScreenPos(j, i))
+
+
+    def tabPosToScreenPos(self, x, y):
+        xScreen = int (x*100)
+        yScreen = int(y*100 + 100)
+        return xScreen, yScreen
 
     def move(self, token, col):
         """
@@ -55,7 +114,6 @@ class Table(object):
             return True                         # zakonczono sukcesem
         else:
             return False                        # zakonczono porażką
-
 
     def clearTable(self):
         rows, cols = (7, 7)

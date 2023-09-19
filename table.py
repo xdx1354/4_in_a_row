@@ -18,7 +18,7 @@ class Table(object):
 
         size = (width, height)
         self.SCREEN = pygame.display.set_mode(size)
-
+        self.background = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\graphics\4inrow background.png")
 
         self.table = [[0 for i in range(self.COLUMN_COUNT)] for j in range(self.ROW_COUNT)]
 
@@ -26,9 +26,9 @@ class Table(object):
 
     def draw_board(self):
 
-        background = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\4inrow background.png")
-        self.SCREEN.blit(background, (0,0))
+        self.SCREEN.blit(self.background, (0,0))
         pygame.display.flip()
+
 
         """
         for c in range(self.COLUMN_COUNT):
@@ -37,23 +37,10 @@ class Table(object):
         pass
         """
 
-
-
 ## CLI INTERFACE AND BACKEND
     def printTable(self):
         """
-        # print('    ', end="")
-        # for i in range(0,7):
-        #     print(i, ' ', end="")
-        # print("\n")
-        # for i in range (0, 7):
-        #     for j in range (0, 7):
-        #         if j==0:
-        #             print(i, '| ', end="")
-        #             print(self.table[i][j], ' ', end="")
-        #         else:
-        #             print(self.table[i][j], ' ', end="")
-        #     print('\n')
+        Printing on CLI the view of table. Used after next move.
         """
         for i in range(0, 7):
             print(i,'|', end='')
@@ -62,44 +49,75 @@ class Table(object):
             print(self.table[i])
 
     def checkCol(self,col):
+        """
+        Checking if column is not full
+        :param col: colum where player wants to put the token
+        :return: true: if not full, false: if full
+        """
         if self.table[0][col] == 0:
             return True
         else:
             return False
 
     def findEmptyRow(self,col):
+        """
+        :param col: Column choosen by player.
+        :return: first looking from bottom empty row. The token will be added to [return][col]
+        """
         for r in reversed(range(self.ROW_COUNT)):
             if self.table[r][col] == 0:
                 return r
 
     def placeToken(self, col, token):
+
+        """
+        :param col: col where the token will be dropped
+        :param token: token of current player
+        :return: no return
+        """
         xPos = int(self.findEmptyRow(col))
         yPos = int(col)
-        self.table[xPos][yPos] = token                              # inserting
-        xScreenPos = int(xPos*100)
-        yScreenPos = int(yPos*100 + 100)
-        screenPos = (xScreenPos, yScreenPos)
+        self.table[xPos][yPos] = token
+        screenPos = self.tabPosToScreenPos(xPos, yPos)
 
         if token == 1:
-            token_img = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\green_token.png").convert_alpha()
+            token_img = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\graphics\green_token.png").convert_alpha()
             # self.TOKENS[xPos][yPos] = token_img
-            token_img.blit(self.SCREEN, screenPos)
+            self.SCREEN.blit(token_img, screenPos)
         else:
-            token_img = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\red_token.png").convert_alpha()
+            token_img = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\graphics\red_token.png").convert_alpha()
             # self.TOKENS[xPos][yPos] = token_img
-            token_img.blit(self.SCREEN, screenPos)
+            self.SCREEN.blit(token_img, screenPos)
 
+        ##self.printAllTokens()
         pygame.display.update()
 
     def printAllTokens(self):
+        """
+        Printing all tokens on the screen. To keep them for not being overwritten
+        :return: none
+        """
         for i in range(self.ROW_COUNT):
             for j in range(self.COLUMN_COUNT):
-                self.TOKENS[i][j].blit(self.SCREEN, self.tabPosToScreenPos(j, i))
+                # self.TOKENS[i][j].blit(self.SCREEN, self.tabPosToScreenPos(j, i))
+                if self.table[i][j] == 1:
+                    red_token = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\graphics\red_token.png").convert_alpha()
+                    red_token.blit(self.background, self.tabPosToScreenPos(j, i))
+
+                if self.table[i][j] == 2:
+                    green_token = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\graphics\green_token.png").convert_alpha()
+                    green_token.blit(self.background, self.tabPosToScreenPos(j, i))
+
 
 
     def tabPosToScreenPos(self, x, y):
-        xScreen = int (x*100)
-        yScreen = int(y*100 + 100)
+        """
+        :param x: table[x][y] first argument of position in table CLI
+        :param y: table[x][y] second argument
+        :return: transposed to position on screen. Screen is fixed to 700x700 [px]
+        """
+        xScreen = int (y*100 + 4)
+        yScreen = int(x*100 + 108)
         return xScreen, yScreen
 
     def move(self, token, col):
@@ -116,10 +134,18 @@ class Table(object):
             return False                        # zakonczono porażką
 
     def clearTable(self):
+        """
+        clearing CLI table
+        :return: no return
+        """
         rows, cols = (7, 7)
         self.table = [[0 for i in range(cols)] for j in range(rows)]
 
     def checkWinCon(self, token):
+        """
+        :param token: currently dropped token
+        :return: true: if win con found, false: if not
+        """
 
         # checking horizontal
         for c in range(self.COLUMN_COUNT-3):

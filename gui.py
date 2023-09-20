@@ -5,6 +5,7 @@ import time
 import pygame
 import os
 from backend import Backend
+from button import Button
 
 class GUI(object):
 
@@ -34,8 +35,11 @@ class GUI(object):
 
 
     def draw_board(self):
+        self.SCREEN.fill(self.BLACK)
         self.SCREEN.blit(self.background, (0,0))
         pygame.display.flip()
+
+
 
 
     def placeToken(self, col, token):
@@ -110,7 +114,7 @@ class GUI(object):
         self.SCREEN.fill(background)
         startText = self.FONT.render("Click the screen to start", True, self.BLACK)
         # print( startText.get_width())
-        self.SCREEN.blit(startText, (self.WIDTH/2 - startText.get_width()/2, self.HEIGHT/2 - startText.get_height()/2))
+        self.SCREEN.blit(startText, (self.WIDTH/2 - startText.get_width()/2, self.HEIGHT/2 - startText.get_height()/2 ))
 
         pygame.display.update()
         while True:
@@ -120,6 +124,17 @@ class GUI(object):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.boardScreen()
 
+            btn = Button(20, 20, 80, 30, (140, 40, 70), (140, 40, 140), self.SCREEN)
+            btn.setText("TEST", "corbel", 10)
+            if btn.isClicked():
+                print("BTN clicked")
+
             pygame.display.update()
             self.clock.tick(15)
+
+    def gameoverScreen(self):
+        background = (69, 69, 69)
+        self.SCREEN.fill(background)
+
+
 

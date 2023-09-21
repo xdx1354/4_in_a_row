@@ -64,7 +64,7 @@ class Button(object):
         """
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed(3)
-        if self.x + self.width > mouse[0] > self.x and self.y + self.height > mouse[1] > self.y:
+        if self.x + self.width > mouse[0] > self.x and self.y + self.height > mouse[1] > self.y and click[0]:
             return True
         else:
             return False

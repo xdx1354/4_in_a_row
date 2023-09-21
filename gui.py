@@ -40,7 +40,11 @@ class GUI(object):
         pygame.display.flip()
 
 
-
+    def restart_game(self):
+        self.draw_board()
+        self.backend.clearTable()
+        self.TURN +=1               # zaczynac bedzie przeciwny gracz
+        self.TURN %=2
 
     def placeToken(self, col, token):
         col = self.backend.last_placed_token_pos[0]
@@ -106,7 +110,7 @@ class GUI(object):
                     self.TURN += 1
                     self.TURN %= 2
             self.clock.tick(15)
-        return True
+        self.gameoverScreen()
 
     def startingScreen(self):
 
@@ -121,13 +125,19 @@ class GUI(object):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.boardScreen()
+
+            btn = Button(self.SCREEN.get_width()/2 - 140/2, self.SCREEN.get_height()/2 - 100/2, 140, 100, (140, 40, 70), (140, 40, 140), self.SCREEN)
+            btn.setText("START", "corbel", 15)
+            if btn.isClicked():
+                # print("BTN CLICKED")
+                self.boardScreen()
+                # break
 
             btn = Button(20, 20, 80, 30, (140, 40, 70), (140, 40, 140), self.SCREEN)
             btn.setText("TEST", "corbel", 10)
             if btn.isClicked():
                 print("BTN clicked")
+                # break
 
             pygame.display.update()
             self.clock.tick(15)
@@ -135,6 +145,25 @@ class GUI(object):
     def gameoverScreen(self):
         background = (69, 69, 69)
         self.SCREEN.fill(background)
+        pygame.display.update()
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                # if event.type == pygame.MOUSEBUTTONDOWN:
+                #     self.boardScreen()
+
+            btn = Button(20, 20, 80, 30, (140, 40, 70), (140, 40, 140), self.SCREEN)
+            btn.setText("TEST", "corbel", 10)
+            if btn.isClicked():
+                self.backend.clearTable()
+                self.draw_board()
+                self.boardScreen()
+                print("BTN clicked")
+
+            pygame.display.update()
+            self.clock.tick(15)
 
 
 

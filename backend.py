@@ -6,6 +6,7 @@ class Backend(object):
         self.COLUMN_COUNT = cols
         self.ROW_COUNT = rows
         self.table = [[0 for i in range(self.COLUMN_COUNT)] for j in range(self.ROW_COUNT)]
+        self.winner = -1
 
     def passTable(self):
         return self.table
@@ -88,6 +89,7 @@ class Backend(object):
             for r in range(self.ROW_COUNT):
                 if self.table[r][c] == token and self.table[r][c + 1] == token and self.table[r][c + 2] == token and \
                         self.table[r][c + 3] == token:
+                    self.winner = token
                     return True
 
         # checking vertical
@@ -95,6 +97,7 @@ class Backend(object):
             for c in range(self.COLUMN_COUNT):
                 if self.table[r][c] == token and self.table[r + 1][c] == token and self.table[r + 2][c] == token and \
                         self.table[r + 3][c] == token:
+                    self.winner = token
                     return True
 
         # checking positively sloped diagonals
@@ -102,13 +105,15 @@ class Backend(object):
             for r in range(3, self.ROW_COUNT):
                 if self.table[r][c] == token and self.table[r - 1][c + 1] == token and self.table[r - 2][
                     c + 2] == token and self.table[r - 3][c + 3] == token:
+                    self.winner = token
                     return True
 
         # checking negatively sloped diagonals
         for c in range(self.COLUMN_COUNT - 3):
-            for r in range(self.COLUMN_COUNT - 3):
+            for r in range(self.ROW_COUNT - 3):
                 if self.table[r][c] == token and self.table[r + 1][c + 1] == token and self.table[r + 2][
                     c + 2] == token and self.table[r + 3][c + 3] == token:
+                    self.winner = token
                     return True
 
 

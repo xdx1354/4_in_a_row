@@ -31,6 +31,10 @@ class GUI(object):
         self.background = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\graphics\4inrow background.png")
         self.clock = pygame.time.Clock()
 
+        # GUI POSITIONING CONSTANTS
+        self.MIDDLE_OF_SCREEN = (self.WIDTH/2, self.HEIGHT/2)
+
+
 
 
 

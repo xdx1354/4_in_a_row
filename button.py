@@ -36,6 +36,11 @@ class Button(object):
         self.hoverColor = hoverColor
         self.screen = layer
 
+        #ATTRIBUTES
+        self.isCentered = False
+        self.isLabeled = False
+        self.label = pygame.font.SysFont("", 10)
+
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed(3)
         if x + width > mouse[0] > x and y + height > mouse[1] > y:
@@ -53,8 +58,9 @@ class Button(object):
         :param size: int, size of text
         :return:
         """
-        labelFont = pygame.font.SysFont(font, size)
-        labelText = labelFont.render(text, True, (0,0,0))
+        self.isLabeled = True
+        self.label = pygame.font.SysFont(font, size)
+        labelText = self.label.render(text, True, (0,0,0))
         self.screen.blit(labelText, (self.x + self.width/2 - labelText.get_width()/2, self.y + self.height/2 - labelText.get_height()/2))
 
     def isClicked(self):
@@ -68,3 +74,7 @@ class Button(object):
             return True
         else:
             return False
+
+    def reposition(self, newX, newY):
+        # self.y =
+        pass

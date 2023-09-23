@@ -1,4 +1,5 @@
 from table import Table as tab
+from elo_algorithm import Elo_algorithm as elo
 t = tab()
 
 
@@ -64,3 +65,11 @@ t.table = [ [0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 1, 0, 0],
             [0, 0, 0, 1, 0, 0, 0] ]
 assert t.checkWinCon(1) == True
+
+
+elo = elo()
+
+r1 = 1000
+r2 = 1400
+
+print(elo.eloRating(r1, r2, 60, 2)) #good

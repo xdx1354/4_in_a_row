@@ -74,52 +74,36 @@ class GUI(object):
             self.SCREEN.blit(token_img, screenPos)
         pygame.display.update()
 
-
-
     def boardScreen(self):
         self.draw_board()
         pygame.display.update()
         game_over = False
-        while True and not game_over:
-            for event in pygame.event.get():
 
+        while not game_over:
+            for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    selection = int(math.floor(event.pos[0] / 100))
+
                     if self.TURN == 0:
-                        again = 1
-                        while again == 1:
-                            selection = int(math.floor(event.pos[0] / 100))
-                            if self.backend.move(1, int(selection)):
-                                self.placeToken(selection, self.TURN)
-                                again = 0
-                            else:
-                                print("Wybrana kolumna jest pelna, wybierz inna")
-                                again = 1
-
+                        if self.backend.move(1, selection):
+                            self.placeToken(selection, self.TURN)
+                            if self.backend.checkWinCon(self.TURN + 1):
+                                print('Gracz ', self.TURN + 1, ' wygrywa!')
+                                game_over = True
+                            self.TURN = 1  # Switch to the next player's turn
                     else:
-                        again = 1
-                        while again == 1:
+                        if self.backend.move(2, selection):
+                            self.placeToken(selection, self.TURN)
+                            if self.backend.checkWinCon(self.TURN + 1):
+                                print('Gracz ', self.TURN + 1, ' wygrywa!')
+                                game_over = True
+                            self.TURN = 0  # Switch to the next player's turn
 
-                            selection = int(math.floor(event.pos[0] / 100))
-                            if self.backend.move(2, int(selection)):
-                                again = 0
-                                self.placeToken(selection, self.TURN)
-                            else:
-                                print("Wybrana kolumna jest pelna, wybierz inna")
-                                again = 1
-                                # TODO: FIX INFINITY LOOP!!!!!!!!!!
+            self.clock.tick(15)  # Limit the frame rate
 
-
-                    # check wincon
-                    if self.backend.checkWinCon(self.TURN + 1):
-                        print('Gracz ', self.TURN + 1, ' wygrywa!')
-                        game_over = True
-
-                    self.TURN += 1
-                    self.TURN %= 2
-            self.clock.tick(15)
         self.gameoverScreen()
 
     """

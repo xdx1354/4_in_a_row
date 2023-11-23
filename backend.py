@@ -1,3 +1,5 @@
+import random
+
 from database import DataBase as DB
 
 
@@ -12,6 +14,8 @@ class Backend(object):
         self.db = DB()
         self.playersDB = self.getDB()
         self.players = self.getPlayers()
+        self.current_player1 = ''
+        self.current_player2 = ''
 
     def passTable(self):
         return self.table
@@ -154,3 +158,11 @@ class Backend(object):
 
     def generateID(self):
         return int(self.playersDB[len(self.playersDB) - 1][1]) + 1
+
+    def getNameFromID(self, playersID):
+        for i in range(len(self.playersDB)):
+            if int(self.playersDB[i][1]) == playersID:
+                return self.playersDB[i][0]
+
+    def getRandomColor(self):
+        return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)

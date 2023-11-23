@@ -39,6 +39,19 @@ class GUI(object):
         # GUI POSITIONING CONSTANTS
         self.MIDDLE_OF_SCREEN = (self.WIDTH/2, self.HEIGHT/2)
 
+        self.navy_pixel = pygame_menu.themes.Theme(
+            background_color=(30, 50, 70),
+            title_font=pygame_menu.font.FONT_8BIT,
+            title_font_size=40,
+            title_font_color=(200, 200, 200),
+            widget_font=pygame_menu.font.FONT_BEBAS,
+            widget_font_size=30,
+            widget_font_color=(255, 255, 255),
+            widget_background_color=(50, 70, 90,0),
+            selection_color=(200, 50, 50),
+            # selection_effect=pygame_menu.widgets.effects.Shadow()
+        )
+
 
 
 
@@ -51,8 +64,9 @@ class GUI(object):
 
 
     def restart_game(self):
-        self.draw_board()
         self.backend.clearTable()
+        self.draw_board()
+        self.boardScreen()
         self.TURN +=1               # zaczynac bedzie przeciwny gracz
         self.TURN %=2
 
@@ -75,6 +89,7 @@ class GUI(object):
         pygame.display.update()
 
     def boardScreen(self):
+        self.backend.clearTable()
         self.draw_board()
         pygame.display.update()
         game_over = False
@@ -86,25 +101,33 @@ class GUI(object):
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     selection = int(math.floor(event.pos[0] / 100))
-
                     if self.TURN == 0:
                         if self.backend.move(1, selection):
                             self.placeToken(selection, self.TURN)
                             if self.backend.checkWinCon(self.TURN + 1):
-                                print('Gracz ', self.TURN + 1, ' wygrywa!')
+                                if self.TURN + 1 == 1:
+                                    winner = self.FIRST_PLAYER
+                                else:
+                                    winner = self.SECOND_PLAYER
+                                print('Gracz ', winner[0], ' wygrywa!')
                                 game_over = True
+                                self.gameoverScreen(winner)  # Call gameoverScreen when game ends
                             self.TURN = 1  # Switch to the next player's turn
                     else:
                         if self.backend.move(2, selection):
                             self.placeToken(selection, self.TURN)
                             if self.backend.checkWinCon(self.TURN + 1):
-                                print('Gracz ', self.TURN + 1, ' wygrywa!')
+                                if self.TURN + 1 == 1:
+                                    winner = self.FIRST_PLAYER
+                                else:
+                                    winner = self.SECOND_PLAYER
+                                print('Gracz ', winner[0], ' wygrywa!')
                                 game_over = True
+                                self.gameoverScreen(winner)  # Call gameoverScreen when game ends
                             self.TURN = 0  # Switch to the next player's turn
 
-            self.clock.tick(15)  # Limit the frame rate
+        self.clock.tick(15)  # Limit the frame rate
 
-        self.gameoverScreen()
 
     """
     def startingScreen(self):
@@ -138,31 +161,21 @@ class GUI(object):
             self.clock.tick(15)
     """
 
-    def gameoverScreen(self):
-        background = (69, 69, 69)
-        self.SCREEN.fill(background)
-        pygame.display.update()
+    def gameoverScreen(self, winner):
 
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                # if event.type == pygame.MOUSEBUTTONDOWN:
-                #     self.boardScreen()
+        menu = pygame_menu.Menu('Game Over', self.WIDTH - 20, self.HEIGHT - 20, theme=self.navy_pixel)
+        labelText = winner[0] + ' won!'
+        menu.add.label(labelText, font_size=100,  font_color=(102, 0, 102), margin = (0,100))
+        menu.add.button("PLAY AGAIN", lambda: self.restart_game())  # Add a button to restart the game
+        menu.add.button('Back to Menu', lambda: self.newStartingScreen())  # Button to go back to the main menu
 
-            btn = Button(20, 20, 80, 30, (140, 40, 70), (140, 40, 140), self.SCREEN)
-            btn.setText("TEST", "corbel", 10)
-            if btn.isClicked():
-                self.backend.clearTable()
-                self.draw_board()
-                self.boardScreen()
-                print("BTN clicked")
+        menu.mainloop(self.SCREEN)  # Show the game over screen
 
-            pygame.display.update()
-            self.clock.tick(15)
+        #
+
 
     def newStartingScreen(self):
-        menu = pygame_menu.Menu('4 in a row', self.WIDTH - 20, self.HEIGHT - 20, theme=pygame_menu.themes.THEME_BLUE)
+        menu = pygame_menu.Menu('4 in a row', self.WIDTH - 20, self.HEIGHT - 20, theme=self.navy_pixel)
 
 
         # Add selectors for choosing players and keep references to them
@@ -197,7 +210,7 @@ class GUI(object):
             self.boardScreen()
 
     def newLeaderboardScreen(self):
-        menu = pygame_menu.Menu('Leaderboard', self.WIDTH - 20, self.HEIGHT - 20, theme=pygame_menu.themes.THEME_BLUE)
+        menu = pygame_menu.Menu('Leaderboard', self.WIDTH - 20, self.HEIGHT - 20, theme=self.navy_pixel)
 
         # Sort player data by rating (descending order)
         players_sorted = sorted(self.backend.playersDB, key=lambda x: int(x[2]), reverse=True)
@@ -217,7 +230,7 @@ class GUI(object):
             nonlocal newPlayerName
             newPlayerName = val
 
-        menu = pygame_menu.Menu('Add new player', self.WIDTH - 20, self.HEIGHT - 20, theme=pygame_menu.themes.THEME_BLUE)
+        menu = pygame_menu.Menu('Add new player', self.WIDTH - 20, self.HEIGHT - 20, theme=self.navy_pixel)
 
         menu.add.text_input('Enter player\'s name: ', default='', onchange=get_name)
 

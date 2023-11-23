@@ -64,11 +64,12 @@ class GUI(object):
 
 
     def restart_game(self):
+        self.TURN +=1               # zaczynac bedzie przeciwny gracz
+        self.TURN %=2
         self.backend.clearTable()
         self.draw_board()
         self.boardScreen()
-        self.TURN +=1               # zaczynac bedzie przeciwny gracz
-        self.TURN %=2
+
 
     def placeToken(self, col, token):
         col = self.backend.last_placed_token_pos[0]

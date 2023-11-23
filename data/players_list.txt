@@ -1,5 +1,5 @@
-player1;1;1000
-player2;2;1000
-player3;3;1000
-player4;4;1000
-player5;5;1000
+player1; 1; 1000
+player2; 2; 1000
+player3; 3; 1000
+player4; 4; 1000
+player5; 5; 1000

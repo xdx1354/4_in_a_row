@@ -190,6 +190,7 @@ class GUI(object):
 
         # Add a button to start the game, passing the selectors' references to the start_game function
         menu.add.button('Start Game', lambda: self.start_game(selector_player1, selector_player2))
+        menu.add.button('Add new player', lambda: self.addNewPlayerScreen())
         menu.add.button('LEADERBOARD', lambda: self.newLeaderboardScreen())
         menu.mainloop(self.SCREEN)
 
@@ -215,7 +216,7 @@ class GUI(object):
         menu = pygame_menu.Menu('Leaderboard', self.WIDTH - 20, self.HEIGHT - 20, theme=pygame_menu.themes.THEME_BLUE)
 
         # Sort player data by rating (descending order)
-        players_sorted = sorted(self.backend.playersDB, key=lambda x: x[2], reverse=True)
+        players_sorted = sorted(self.backend.playersDB, key=lambda x: int(x[2]), reverse=True)
         leaderboard_title = "Leaderboard"
         menu.add.label(leaderboard_title)
 
@@ -225,5 +226,22 @@ class GUI(object):
         menu.add.button('Back to Menu', self.newStartingScreen)
         menu.mainloop(self.SCREEN)
 
+    def addNewPlayerScreen(self):
 
+        newPlayerName = ""
+        def get_name(val):
+            nonlocal newPlayerName
+            newPlayerName = val
+
+        menu = pygame_menu.Menu('Add new player', self.WIDTH - 20, self.HEIGHT - 20, theme=pygame_menu.themes.THEME_BLUE)
+
+        menu.add.text_input('Enter player\'s name: ', default='', onchange=get_name)
+
+
+
+        menu.add.button('ADD', lambda: self.backend.addPlayer(newPlayerName))
+
+
+        menu.add.button('Back to Menu', self.newStartingScreen)
+        menu.mainloop(self.SCREEN)
 

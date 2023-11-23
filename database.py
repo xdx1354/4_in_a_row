@@ -33,15 +33,13 @@ class DataBase(object):
         return table_of_players
 
     def savePlayerList(self, table_of_players):
-
         with open(self.path + 'players_list.txt', 'w') as file:
-            for i in range(len(table_of_players)):
+            for player_data in table_of_players:
                 line = ''
-                j = 0
-                for j in range(len(table_of_players.get(i)) -1 ):   # iterate despite last field to prevent putting unnecessary semicolon at the end
-                    line += table_of_players.get(i).get(j) + ';'
+                for i in range(len(player_data) - 1):  # Iterate over each element in player_data except the last one
+                    line += str(player_data[i]) + ';'  # Assuming player_data contains strings or convertible values
 
-                line += table_of_players.get(i).get(j+1) + '\n'     # inserting newline
+                line += str(player_data[-1]) + '\n'  # Add the last element and a newline
                 file.write(line)
 
     def getPlayersTuple(self):

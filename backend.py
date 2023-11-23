@@ -137,3 +137,20 @@ class Backend(object):
 
     def getPlayers(self):
         return self.db.getPlayersTuple()
+
+    def addPlayer(self, playerName):
+        """
+        Adds a new player with specific  name, generates new ID, sets initial value of rating to 1000
+        :param playerName: dictionary containg inputs  containing player name
+        :return:
+        """
+        print("Printing name",playerName)
+        rawName = playerName
+        self.playersDB.append((rawName, int(self.generateID()), int(1000)))
+
+        # push to database
+        print(self.playersDB)
+        self.db.savePlayerList(self.playersDB)
+
+    def generateID(self):
+        return int(self.playersDB[len(self.playersDB) - 1][1]) + 1

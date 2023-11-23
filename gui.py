@@ -90,6 +90,7 @@ class GUI(object):
         pygame.display.update()
 
     def boardScreen(self):
+        self.vsScreen()
         self.backend.clearTable()
         self.draw_board()
         pygame.display.update()
@@ -108,8 +109,11 @@ class GUI(object):
                             if self.backend.checkWinCon(self.TURN + 1):
                                 if self.TURN + 1 == 1:
                                     winner = self.FIRST_PLAYER
+                                    self.backend.updateRatings(1, self.FIRST_PLAYER[1], self.SECOND_PLAYER[1])
                                 else:
                                     winner = self.SECOND_PLAYER
+                                    self.backend.updateRatings(2, self.FIRST_PLAYER[1], self.SECOND_PLAYER[1])
+
                                 print('Gracz ', winner[0], ' wygrywa!')
                                 game_over = True
                                 self.gameoverScreen(winner)  # Call gameoverScreen when game ends
@@ -211,6 +215,7 @@ class GUI(object):
             self.boardScreen()
 
     def newLeaderboardScreen(self):
+        self.backend.getDB()
         menu = pygame_menu.Menu('Leaderboard', self.WIDTH - 20, self.HEIGHT - 20, theme=self.navy_pixel)
 
         # Sort player data by rating (descending order)
@@ -243,3 +248,44 @@ class GUI(object):
         menu.add.button('Back to Menu', self.newStartingScreen)
         menu.mainloop(self.SCREEN)
 
+    def vsScreen(self):
+        # Get player information
+        player1_name = self.FIRST_PLAYER[0]
+        player2_name = self.SECOND_PLAYER[0]
+        player1_rating = self.backend.getRatingFromID(self.FIRST_PLAYER[1])
+        player2_rating = self.backend.getRatingFromID(self.SECOND_PLAYER[1])
+        print(self.FIRST_PLAYER[1])
+
+        # Display player information on the screen
+        vs_font = pygame.font.SysFont('mypuma', 90)
+        player_font = pygame.font.SysFont('consolas', 30)
+
+        # Render VS text
+        vs_text = vs_font.render("VS", True, (255, 255, 255))
+
+        # Render player information
+        player1_text = player_font.render(f"{player1_name} - Rating: {player1_rating}", True, (255, 255, 255))
+        player2_text = player_font.render(f"{player2_name} - Rating: {player2_rating}", True, (255, 255, 255))
+
+        # Clear the screen
+        self.SCREEN.fill((30, 50, 70))
+
+        # Calculate positions
+        vs_text_rect = vs_text.get_rect(center=(self.WIDTH / 2, self.HEIGHT / 2))
+        player1_text_rect = player1_text.get_rect(topleft=(20, 200))
+        player2_text_rect = player2_text.get_rect(bottomright=(self.WIDTH - 20, self.HEIGHT - 200))
+
+        # Display text on the screen
+        self.SCREEN.blit(vs_text, vs_text_rect)
+        self.SCREEN.blit(player1_text, player1_text_rect)
+        self.SCREEN.blit(player2_text, player2_text_rect)
+
+        # Update the display
+        pygame.display.update()
+
+        # Display for around 3 seconds
+        pygame.time.wait(3000)
+
+        # Clear the screen
+        self.SCREEN.fill((30, 50, 70))
+        pygame.display.update()

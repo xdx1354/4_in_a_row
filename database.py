@@ -32,7 +32,7 @@ class DataBase(object):
         self.table_of_players = table_of_players # may not be needed
         return table_of_players
 
-    def savePlayerList(self, table_of_players):
+    def saveDB(self, table_of_players):
         with open(self.path + 'players_list.txt', 'w') as file:
             for player_data in table_of_players:
                 line = ''
@@ -41,6 +41,9 @@ class DataBase(object):
 
                 line += str(player_data[-1]) + '\n'  # Add the last element and a newline
                 file.write(line)
+
+
+
 
     def getPlayersTuple(self):
         """

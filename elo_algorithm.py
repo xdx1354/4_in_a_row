@@ -2,7 +2,7 @@ import math
 
 
 def probability(ratingA, ratingB):
-    return 1.0 * 1.0 / (1 + 1.0 * math.pow(10, 1.0 * (ratingA - ratingB) / 400))
+    return 1.0 * 1.0 / (1 + 1.0 * math.pow(10, 1.0 * (int(ratingA) - int(ratingB)) / 400))
 
 
 class Elo_algorithm(object):
@@ -23,12 +23,12 @@ class Elo_algorithm(object):
         Pb = probability(ratingA, ratingB)
 
         if who_won == 1:
-            ratingA = ratingA + k_const * (1 - Pa)
-            ratingB = ratingB + k_const * (0 - Pb)
+            ratingA = int(ratingA) + int(k_const) * (1 - Pa)
+            ratingB = int(ratingB) + int(k_const) * (0 - Pb)
         else:
-            ratingA = ratingA + k_const * (0 - Pa)
-            ratingB = ratingB + k_const * (1 - Pb)
+            ratingA = int(ratingA) + int(k_const) * (0 - Pa)
+            ratingB = int(ratingB) + int(k_const) * (1 - Pb)
 
-        return ratingA, ratingB
+        return int(ratingA), int(ratingB)
 
 

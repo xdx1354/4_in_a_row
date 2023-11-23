@@ -1,7 +1,7 @@
 import random
 
 from database import DataBase as DB
-
+from elo_algorithm import Elo_algorithm as elo
 
 class Backend(object):
     def __init__(self, cols, rows):
@@ -154,7 +154,7 @@ class Backend(object):
 
         # push to database
         print(self.playersDB)
-        self.db.savePlayerList(self.playersDB)
+        self.db.saveDB(self.playersDB)
 
     def generateID(self):
         return int(self.playersDB[len(self.playersDB) - 1][1]) + 1
@@ -164,5 +164,30 @@ class Backend(object):
             if int(self.playersDB[i][1]) == playersID:
                 return self.playersDB[i][0]
 
+    def getRatingFromID(self, playersID):
+        for i in range(len(self.playersDB)):
+            if int(self.playersDB[i][1]) == int(playersID):
+                return self.playersDB[i][2]
     def getRandomColor(self):
         return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
+
+    def setRating(self, playersID, newRating):
+        for i in range(len(self.playersDB)):
+            if int(self.playersDB[i][1]) == int(playersID):
+                self.playersDB[i][2] = int(newRating)
+                self.db.saveDB(self.playersDB)
+                break
+
+    def updateRatings(self, whoWon, p1_ID, p2_ID):
+
+        p1_rating = self.getRatingFromID(p1_ID)
+        p2_rating = self.getRatingFromID(p2_ID)
+
+        # calculate new ratings
+        elo_alg = elo()
+        (p1_rating, p2_rating) =elo_alg.eloRating(p1_rating, p2_rating, 1000, whoWon)
+
+        # update database
+        self.setRating(p1_ID, p1_rating)
+        self.setRating(p2_ID, p2_rating)
+

@@ -1,12 +1,17 @@
+from database import DataBase as DB
 
 
 class Backend(object):
     def __init__(self, cols, rows):
+
         self.last_placed_token_pos = (-1, -1)
         self.COLUMN_COUNT = cols
         self.ROW_COUNT = rows
         self.table = [[0 for i in range(self.COLUMN_COUNT)] for j in range(self.ROW_COUNT)]
         self.winner = -1
+        self.db = DB()
+        self.playersDB = self.getDB()
+        self.players = self.getPlayers()
 
     def passTable(self):
         return self.table
@@ -126,3 +131,9 @@ class Backend(object):
         xScreen = int (y*100 + 4)
         yScreen = int(x*100 + 108)
         return xScreen, yScreen
+
+    def getDB(self):
+       return self.db.getPlayersDB()
+
+    def getPlayers(self):
+        return self.db.getPlayersTuple()

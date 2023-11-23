@@ -6,6 +6,7 @@ import pygame
 import os
 from backend import Backend
 from button import Button
+import pygame_menu
 
 class GUI(object):
 
@@ -18,21 +19,26 @@ class GUI(object):
 
 
     def __init__(self):
+        self.SECOND_PLAYER = None
+        self.FIRST_PLAYER = None
         os.environ['SDL_VIDEO_WINDOW_POS'] = '100,100'
         pygame.init()
         self.WIDTH = self.COLUMN_COUNT * self.SQUARESIZE
         self.HEIGHT = (self.ROW_COUNT + 1) * self.SQUARESIZE
         self.TURN = 0
         self.backend = Backend(self.COLUMN_COUNT, self.ROW_COUNT)
+
+
         self.FONT = pygame.font.SysFont("corbel", 20)
 
         size = (self.WIDTH, self.HEIGHT)
         self.SCREEN = pygame.display.set_mode(size)
-        self.background = pygame.image.load(R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\graphics\4inrow background.png")
+        self.background = pygame.image.load(R".\graphics\4inrow background.png")
         self.clock = pygame.time.Clock()
 
         # GUI POSITIONING CONSTANTS
         self.MIDDLE_OF_SCREEN = (self.WIDTH/2, self.HEIGHT/2)
+
 
 
 
@@ -58,12 +64,12 @@ class GUI(object):
 
         if token == 1:
             token_img = pygame.image.load(
-                R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\graphics\green_token.png").convert_alpha()
+                R".\graphics\green_token.png").convert_alpha()
             # self.TOKENS[xPos][yPos] = token_img
             self.SCREEN.blit(token_img, screenPos)
         else:
             token_img = pygame.image.load(
-                R"D:\Moje dokumenty\PROGRAMOWANIE\4_in_a_row\graphics\red_token.png").convert_alpha()
+                R".\graphics\red_token.png").convert_alpha()
             # self.TOKENS[xPos][yPos] = token_img
             self.SCREEN.blit(token_img, screenPos)
         pygame.display.update()
@@ -116,6 +122,7 @@ class GUI(object):
             self.clock.tick(15)
         self.gameoverScreen()
 
+    """
     def startingScreen(self):
 
         background = (69,69,69)
@@ -145,6 +152,7 @@ class GUI(object):
 
             pygame.display.update()
             self.clock.tick(15)
+    """
 
     def gameoverScreen(self):
         background = (69, 69, 69)
@@ -168,6 +176,54 @@ class GUI(object):
 
             pygame.display.update()
             self.clock.tick(15)
+
+    def newStartingScreen(self):
+        menu = pygame_menu.Menu('4 in a row', self.WIDTH - 20, self.HEIGHT - 20, theme=pygame_menu.themes.THEME_BLUE)
+
+
+        # Add selectors for choosing players and keep references to them
+        selector_player1 = menu.add.selector(title='Choose 1st player\t', items=self.backend.players)
+        selector_player2 = menu.add.selector(title='Choose 2nd player\t', items=self.backend.players)
+
+        self.FIRST_PLAYER = selector_player1.get_value()[0]
+        self.SECOND_PLAYER = selector_player2.get_value()[0]
+
+        # Add a button to start the game, passing the selectors' references to the start_game function
+        menu.add.button('Start Game', lambda: self.start_game(selector_player1, selector_player2))
+        menu.add.button('LEADERBOARD', lambda: self.newLeaderboardScreen())
+        menu.mainloop(self.SCREEN)
+
+    def start_game(self, selector_player1, selector_player2):
+        # Retrieve values from selectors passed as arguments
+        self.FIRST_PLAYER = selector_player1.get_value()[0]
+        self.SECOND_PLAYER = selector_player2.get_value()[0]
+
+
+        if self.FIRST_PLAYER == self.SECOND_PLAYER:
+            # Players are the same, show a prompt or message
+            print("Please select different players!")
+            # Add code to show a prompt (maybe with Pygame or any other UI method)
+            # ...
+
+            # Go back to the starting screen/menu
+            self.newStartingScreen()
+        else:
+            print(f'Starting the game with Player 1: {self.FIRST_PLAYER} and Player 2: {self.SECOND_PLAYER}')
+            self.boardScreen()
+
+    def newLeaderboardScreen(self):
+        menu = pygame_menu.Menu('Leaderboard', self.WIDTH - 20, self.HEIGHT - 20, theme=pygame_menu.themes.THEME_BLUE)
+
+        # Sort player data by rating (descending order)
+        players_sorted = sorted(self.backend.playersDB, key=lambda x: x[2], reverse=True)
+        leaderboard_title = "Leaderboard"
+        menu.add.label(leaderboard_title)
+
+        for player in players_sorted:
+            player_info = f"{player[0]} - Rating: {player[2]}"
+            menu.add.label(player_info)
+        menu.add.button('Back to Menu', self.newStartingScreen)
+        menu.mainloop(self.SCREEN)
 
 
 
